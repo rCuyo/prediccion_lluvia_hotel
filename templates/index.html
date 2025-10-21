@@ -24,27 +24,34 @@
         }
 
         .header {
-            background: white;
+            background: 
+                linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('static/fondo_puno.jpeg') center/cover no-repeat;
             border-radius: 20px;
-            padding: 30px;
+            padding: 40px 30px;
             margin-bottom: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            color: #fff; /* para que el texto resalte */
         }
 
         .header h1 {
-            color: #667eea;
+            color: white;
             font-size: 2.5em;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .header p {
-            color: #666;
+            color: rgba(255,255,255,0.95);
             font-size: 1.1em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
 
         .selector-panel {
@@ -53,6 +60,44 @@
             padding: 40px;
             margin-bottom: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .destino-selector {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .destino-selector label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .destino-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .destino-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .destino-select option {
+            padding: 10px;
         }
 
         .date-selector {
@@ -314,11 +359,20 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✈️ Pronóstico Turístico - Puno</h1>
-            <p>Planifica tu viaje con predicciones precisas del clima</p>
+            <h1> Pronóstico Turístico - Puno</h1>
+            <p>Planifica tu viaje con predicciones precisas de un clima</p>
         </div>
-
         <div class="selector-panel">
+            <div class="destino-selector">
+                <label for="destino"> DESTINO TURÍSTICO</label>
+                <select id="destino" class="destino-select">
+                    <option value="islas_uros"> Islas los Uros</option>
+                    <option value="chucuito"> Chucuito</option>
+                    <option value="sillustani"> Sillustani</option>
+                    <option value="malecon"> Malecón</option>
+                </select>
+            </div>
+
             <div class="date-selector">
                 <div class="date-group">
                     <label for="fecha-inicio">📅 Fecha de Llegada</label>
@@ -420,6 +474,8 @@
         async function predecir() {
             const fechaInicio = document.getElementById('fecha-inicio').value;
             const fechaFin = document.getElementById('fecha-fin').value;
+            const destino = document.getElementById('destino').value;
+            const destinoTexto = document.getElementById('destino').options[document.getElementById('destino').selectedIndex].text;
 
             if (!fechaInicio || !fechaFin) {
                 mostrarError('Por favor selecciona ambas fechas');
@@ -440,7 +496,8 @@
                     },
                     body: JSON.stringify({
                         fecha_inicio: fechaInicio,
-                        fecha_fin: fechaFin
+                        fecha_fin: fechaFin,
+                        destino: destino
                     })
                 });
 
@@ -450,6 +507,8 @@
                     throw new Error(data.error || 'Error en la predicción');
                 }
 
+                // Agregar información del destino a los datos
+                data.destinoSeleccionado = destinoTexto;
                 mostrarResultados(data);
 
             } catch (error) {
@@ -460,7 +519,10 @@
         }
 
         function mostrarResultados(data) {
-            // Mostrar estadísticas
+            // Mostrar estadísticas con destino
+            const statsTitle = document.querySelector('#estadisticas h2');
+            statsTitle.textContent = `📊 Resumen para ${data.destinoSeleccionado || 'tu viaje'}`;
+            
             document.getElementById('stat-total').textContent = data.estadisticas.total;
             document.getElementById('stat-buenos').textContent = data.estadisticas.buenos;
             document.getElementById('stat-regulares').textContent = data.estadisticas.regulares;
