@@ -4,3 +4,4 @@ pandas==2.2.0
 scikit-learn==1.6.1
 numpy==1.26.4
 Werkzeug==3.0.1
+gunicorn==22.0.0
