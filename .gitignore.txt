@@ -1,0 +1,10 @@
+# Ignorar entornos virtuales
+.venv/
+venv/
+
+# Archivos de cache de Python
+__pycache__/
+*.pyc
+
+# Archivos del sistema
+.DS_Store

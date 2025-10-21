@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima Puno - Predicción Turística</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .selector-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .date-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .date-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .date-group label {
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-input {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-predecir {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-predecir:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-predecir:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .estadisticas {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .estadisticas.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .resultados {
+            display: none;
+        }
+
+        .resultados.active {
+            display: block;
+        }
+
+        .timeline {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .timeline h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .dias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .dia-card {
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            background: white;
+            border: 3px solid;
+        }
+
+        .dia-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .dia-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .dia-fecha {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dia-numero {
+            font-size: 2.5em;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .dia-mes {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .dia-icono {
+            font-size: 3em;
+        }
+
+        .dia-semana {
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .dia-estado {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .dia-descripcion {
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .dia-recomendacion {
+            color: #777;
+            font-size: 0.85em;
+            font-style: italic;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .error {
+            display: none;
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #c33;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .date-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .dias-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✈️ Pronóstico Turístico - Puno</h1>
+            <p>Planifica tu viaje con predicciones precisas del clima</p>
+        </div>
+
+        <div class="selector-panel">
+            <div class="date-selector">
+                <div class="date-group">
+                    <label for="fecha-inicio">📅 Fecha de Llegada</label>
+                    <input type="date" id="fecha-inicio" class="date-input">
+                </div>
+                <div class="date-group">
+                    <label for="fecha-fin">📅 Fecha de Salida</label>
+                    <input type="date" id="fecha-fin" class="date-input">
+                </div>
+                <button class="btn-predecir" onclick="predecir()">
+                    🔮 Consultar Clima
+                </button>
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analizando condiciones climáticas...</p>
+        </div>
+
+        <div class="estadisticas" id="estadisticas">
+            <h2>📊 Resumen de tu Viaje</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total">0</div>
+                    <div class="stat-label">Días Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-buenos" style="color: #10b981;">0</div>
+                    <div class="stat-label">Días Buenos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card">
+                    <div class="stat-number" id="stat-regulares" style="color: #f59e0b;">0</div>
+                    <div class="stat-label">Días Regulares</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-malos" style="color: #ef4444;">0</div>
+                    <div class="stat-label">Días Malos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-porcentaje">0%</div>
+                    <div class="stat-label">Días Favorables</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resultados" id="resultados">
+            <div class="timeline">
+                <h2>🗓️ Pronóstico Detallado</h2>
+                <div class="dias-grid" id="dias-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Establecer fecha mínima como hoy
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fecha-inicio').value = hoy;
+        document.getElementById('fecha-inicio').min = hoy;
+        
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 7);
+        document.getElementById('fecha-fin').value = manana.toISOString().split('T')[0];
+        document.getElementById('fecha-fin').min = hoy;
+
+        // Actualizar fecha mínima de salida cuando cambia fecha de llegada
+        document.getElementById('fecha-inicio').addEventListener('change', function() {
+            document.getElementById('fecha-fin').min = this.value;
+        });
+
+        const diasSemana = {
+            'Monday': 'Lunes',
+            'Tuesday': 'Martes',
+            'Wednesday': 'Miércoles',
+            'Thursday': 'Jueves',
+            'Friday': 'Viernes',
+            'Saturday': 'Sábado',
+            'Sunday': 'Domingo'
+        };
+
+        const meses = {
+            'Jan': 'Ene', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Abr',
+            'May': 'May', 'Jun': 'Jun', 'Jul': 'Jul', 'Aug': 'Ago',
+            'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dic'
+        };
+
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '⚠️ ' + mensaje;
+            errorDiv.classList.add('active');
+            setTimeout(() => {
+                errorDiv.classList.remove('active');
+            }, 5000);
+        }
+
+        async function predecir() {
+            const fechaInicio = document.getElementById('fecha-inicio').value;
+            const fechaFin = document.getElementById('fecha-fin').value;
+
+            if (!fechaInicio || !fechaFin) {
+                mostrarError('Por favor selecciona ambas fechas');
+                return;
+            }
+
+            // Ocultar resultados anteriores
+            document.getElementById('resultados').classList.remove('active');
+            document.getElementById('estadisticas').classList.remove('active');
+            document.getElementById('error').classList.remove('active');
+            document.getElementById('loading').classList.add('active');
+
+            try {
+                const response = await fetch('/predecir', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fecha_inicio: fechaInicio,
+                        fecha_fin: fechaFin
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la predicción');
+                }
+
+                mostrarResultados(data);
+
+            } catch (error) {
+                mostrarError(error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        function mostrarResultados(data) {
+            // Mostrar estadísticas
+            document.getElementById('stat-total').textContent = data.estadisticas.total;
+            document.getElementById('stat-buenos').textContent = data.estadisticas.buenos;
+            document.getElementById('stat-regulares').textContent = data.estadisticas.regulares;
+            document.getElementById('stat-malos').textContent = data.estadisticas.malos;
+            document.getElementById('stat-porcentaje').textContent = data.estadisticas.porcentaje_bueno + '%';
+            document.getElementById('estadisticas').classList.add('active');
+
+            // Mostrar días
+            const diasGrid = document.getElementById('dias-grid');
+            diasGrid.innerHTML = '';
+
+            data.predicciones.forEach(pred => {
+                const diaCard = document.createElement('div');
+                diaCard.className = 'dia-card';
+                diaCard.style.borderColor = pred.color;
+
+                diaCard.innerHTML = `
+                    <div class="dia-semana">${diasSemana[pred.diaSemana] || pred.diaSemana}</div>
+                    <div class="dia-header">
+                        <div class="dia-fecha">
+                            <div class="dia-numero" style="color: ${pred.color}">${pred.dia}</div>
+                            <div class="dia-mes">${meses[pred.mes] || pred.mes}</div>
+                        </div>
+                        <div class="dia-icono">${pred.icono}</div>
+                    </div>
+                    <div class="dia-estado" style="color: ${pred.color}">${pred.estado}</div>
+                    <div class="dia-descripcion">${pred.descripcion}</div>
+                    <div class="dia-recomendacion">${pred.recomendacion}</div>
+                `;
+
+                diasGrid.appendChild(diaCard);
+            });
+
+            document.getElementById('resultados').classList.add('active');
+
+            // Scroll suave a los resultados
+            setTimeout(() => {
+                document.getElementById('estadisticas').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
