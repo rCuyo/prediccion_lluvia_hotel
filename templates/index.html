@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -238,11 +239,35 @@
         .offer-image {
             width: 100%;
             height: 180px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4em;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .offer-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+        }
+
+        #img-uros {
+            background-image: url('static/uros.jpeg');
+        }
+
+        #img-chucuito {
+            background-image: url('static/chucuito.jpg');
+        }
+
+        #img-sillustani {
+            background-image: url('static/sillustani.jpg');
+        }
+
+        #img-malecon {
+            background-image: url('static/malecon.jpg');
         }
 
         .offer-content {
@@ -572,28 +597,28 @@
             <h2 class="section-title">🏔️ Destinos Populares en Puno</h2>
             <div class="offers-grid">
                 <div class="offer-card" onclick="seleccionarDestino('islas_uros')">
-                    <div class="offer-image">🛶</div>
+                    <div class="offer-image" id="img-uros"></div>
                     <div class="offer-content">
                         <div class="offer-title">Islas los Uros</div>
                         <div class="offer-description">Islas flotantes artificiales en el Lago Titicaca, hogar del pueblo Uros</div>
                     </div>
                 </div>
                 <div class="offer-card" onclick="seleccionarDestino('chucuito')">
-                    <div class="offer-image">⛪</div>
+                    <div class="offer-image" id="img-chucuito"></div>
                     <div class="offer-content">
                         <div class="offer-title">Chucuito</div>
                         <div class="offer-description">Pueblo colonial con arquitectura histórica y vistas al lago</div>
                     </div>
                 </div>
                 <div class="offer-card" onclick="seleccionarDestino('sillustani')">
-                    <div class="offer-image">🗿</div>
+                    <div class="offer-image" id="img-sillustani"></div>
                     <div class="offer-content">
                         <div class="offer-title">Sillustani</div>
                         <div class="offer-description">Chullpas pre-incas con impresionante arquitectura funeraria</div>
                     </div>
                 </div>
                 <div class="offer-card" onclick="seleccionarDestino('malecon')">
-                    <div class="offer-image">🌊</div>
+                    <div class="offer-image" id="img-malecon"></div>
                     <div class="offer-content">
                         <div class="offer-title">Malecón Turístico</div>
                         <div class="offer-description">Paseo panorámico con vistas espectaculares del Lago Titicaca</div>
